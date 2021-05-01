@@ -1,11 +1,13 @@
 #pragma once
 #ifndef WORDSORT_H
 #define WORDSORT_H
+
 // include required libraries
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <stdio.h>
+#include <cctype>
 
 // define keywords
 #define SIZE 50000 //the maximum words
