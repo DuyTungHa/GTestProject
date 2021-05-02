@@ -1,3 +1,4 @@
+
 #include "testCaseGenerator.h"
 #include "wordSort.h"
 
@@ -30,17 +31,18 @@ std::vector<char*> getInputsAlpha(int numberOfInputs) {
 }
 
 std::vector<Pair*> getInputsComplete(int numberOfInputs) {
-	//words 
 	std::vector<char*> words = getInputsAlpha(numberOfInputs);
-	
-	int previousOccurance = 1;
+
+	int previousOccurance = getRandom(1, 5);
 	//random #occurances
 	std::vector<int> occurances;
 	//count repeated occurances
 	std::vector<int> oo;
-	for (int i = 0; i < numberOfInputs; i++) {
-		int occurance = previousOccurance + getRandom(0,5);
-		if (occurance == previousOccurance) {
+
+	occurances.push_back(previousOccurance);
+	oo.push_back(1);
+	for (int i = 1; i < numberOfInputs; i++) {
+		int occurance = previousOccurance + getRandom(0,
 			oo.push_back(oo[i - 1] + 1);
 		}
 		else {
@@ -50,11 +52,8 @@ std::vector<Pair*> getInputsComplete(int numberOfInputs) {
 		previousOccurance = occurance;
 	}
 
-	
 	std::vector<Pair*> inputs;
-	//process backward
-	for (int i = occurances.size()-1; i >= 0; i--) {
-		//if word occurance doesnt repeat
+	for (int i = occurances.size() - 1; i >= 0; i--) {
 		if (oo[i] == 1) {
 			Pair* input = new Pair;
 			int index = getRandom(0, words.size() - 1);
@@ -64,25 +63,21 @@ std::vector<Pair*> getInputsComplete(int numberOfInputs) {
 			input->occurance = occurances[i];
 			inputs.push_back(input);
 		}
-		//word occurance repeats oo[i] times
 		else {
-		/*BUG is in this part*/
 			int index = words.size();
+			int range = words.size() / oo[i];
 			for (int t = 0; t < oo[i]; t++) {
 				Pair* input = new Pair;
-				index -= getRandom(1, words.size()/oo[i]);
+				index -= getRandom(1, range);
 				strcpy(input->word, words[index]);
 				delete words[index];
 				words.erase(words.begin() + index);
-				input->occurance = occurances[i-t];
+				input->occurance = occurances[i - t];
 				inputs.push_back(input);
 			}
-			i -= oo[i]-1;
+			i -= oo[i] - 1;
 		}
 	}
 
 	return inputs;
 }
-
-
-
