@@ -12,6 +12,7 @@
 // define keywords
 #define SIZE 50000 //the maximum words
 
+
 // decalre data types
 struct Pair {
     int occurance = 0;
@@ -45,4 +46,8 @@ void readAlpha(TreeNode*, std::ofstream&);
 void readComplete(TreeNode*, std::ofstream&);
 void deleteTree(TreeNode*);
 
+
+extern Pair pairArr[SIZE];
+extern int words;
+extern int nextPos;
 #endif
