@@ -42,7 +42,8 @@ std::vector<Pair*> getInputsComplete(int numberOfInputs) {
 	occurances.push_back(previousOccurance);
 	oo.push_back(1);
 	for (int i = 1; i < numberOfInputs; i++) {
-		int occurance = previousOccurance + getRandom(0,
+		int occurance = previousOccurance + getRandom(0, 5);
+		if (occurance == previousOccurance) {
 			oo.push_back(oo[i - 1] + 1);
 		}
 		else {
