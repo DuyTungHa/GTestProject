@@ -1,4 +1,3 @@
-#pragma once
 #ifndef TESTCASEGENERATOR_H
 #define TESTCASEGENERATOR_H
 
@@ -11,7 +10,6 @@
 
 std::vector<char*> getInputsAlpha(int);
 
-//std::vector<Pair*> getInputsComplete(int);
+std::vector<Pair*> getInputsComplete(int);
 
 #endif
-

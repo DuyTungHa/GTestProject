@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "testCaseGenerator.h"
 #include "wordSort.h"
 
@@ -8,6 +7,7 @@ std::vector<std::string> wordPool = { "alpaca","bee","cat","dog","eagle","frog",
 "xerus","yak","zebra" };
 
 int getRandom(int min, int max) {
+	if (min == max) return min;
 	static std::random_device randev;
 	static std::mt19937 mt_eng(randev());
 	std::uniform_int_distribution<int> uniform(min, max);
@@ -19,7 +19,7 @@ std::vector<char*> getInputsAlpha(int numberOfInputs) {
 
 	std::vector<char*> inputs;
 	for (int i = 0; i < numberOfInputs; i++) {
-		int index = range * i + getRandom(1,range) - 1;
+		int index = range * i + getRandom(1, range) - 1;
 		std::string sWord = wordPool[index];
 		char* word;
 		word = new char[sWord.length() + 1];
@@ -28,12 +28,15 @@ std::vector<char*> getInputsAlpha(int numberOfInputs) {
 
 	return inputs;
 }
-/*
-std::vector<Pair*> getInputsComplete(int numberOfInputs) {
-	std::vector<char*> words = getInputsAlpha(numberOfInputs);
 
+std::vector<Pair*> getInputsComplete(int numberOfInputs) {
+	//words 
+	std::vector<char*> words = getInputsAlpha(numberOfInputs);
+	
 	int previousOccurance = 1;
+	//random #occurances
 	std::vector<int> occurances;
+	//count repeated occurances
 	std::vector<int> oo;
 	for (int i = 0; i < numberOfInputs; i++) {
 		int occurance = previousOccurance + getRandom(0,5);
@@ -47,8 +50,11 @@ std::vector<Pair*> getInputsComplete(int numberOfInputs) {
 		previousOccurance = occurance;
 	}
 
+	
 	std::vector<Pair*> inputs;
+	//process backward
 	for (int i = occurances.size()-1; i >= 0; i--) {
+		//if word occurance doesnt repeat
 		if (oo[i] == 1) {
 			Pair* input = new Pair;
 			int index = getRandom(0, words.size() - 1);
@@ -58,21 +64,25 @@ std::vector<Pair*> getInputsComplete(int numberOfInputs) {
 			input->occurance = occurances[i];
 			inputs.push_back(input);
 		}
+		//word occurance repeats oo[i] times
 		else {
-			int index = words.size()-1;
-			for (int t = 0; t < oo[i]; i++) {
+		/*BUG is in this part*/
+			int index = words.size();
+			for (int t = 0; t < oo[i]; t++) {
 				Pair* input = new Pair;
-				index -= getRandom(0, words.size()/oo[i] - 1);
+				index -= getRandom(1, words.size()/oo[i]);
 				strcpy(input->word, words[index]);
 				delete words[index];
 				words.erase(words.begin() + index);
 				input->occurance = occurances[i-t];
 				inputs.push_back(input);
 			}
-			i -= oo[i];
+			i -= oo[i]-1;
 		}
 	}
 
 	return inputs;
 }
-*/
+
+
+
