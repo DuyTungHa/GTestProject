@@ -6,7 +6,7 @@
 
 using namespace std;
 
-struct WordFixture : public testing::Test {
+struct WordFixture : public testing::TestWithParam<int> {
 	vector<char*> inputs;
 	void SetUp() {
 		inputs = getInputsAlpha(2);
@@ -19,7 +19,7 @@ struct WordFixture : public testing::Test {
 	}
 };
 
-struct SearchFixture : public testing::Test {
+struct SearchFixture : public testing::TestWithParam<int> {
 	vector<char*> inputs;
 	char newWord[101];
 	void SetUp() {
@@ -35,46 +35,40 @@ struct SearchFixture : public testing::Test {
 			pairArr[i].word[0] = '\0';
 			pairArr[i].occurance = 0;
 		}
-
+		nextPos = words = 0;
 		while (!inputs.empty()) {
 			delete inputs.back();
 			inputs.pop_back();
 		}
-		nextPos = words = 0;
 	}
 };
 
+// Run randomized test multiple times
+INSTANTIATE_TEST_CASE_P(Instantiation, WordFixture, ::testing::Range(1, 11), );
+INSTANTIATE_TEST_CASE_P(Instantiation, SearchFixture, ::testing::Range(1, 11), );
 
 TEST_F(WordFixture, WordCompare) {
-	for (int i = 0; i < 10; i++) {
-		EXPECT_TRUE(comp(inputs[0], inputs[1]));
-		EXPECT_FALSE(comp(inputs[1], inputs[0]));
-		EXPECT_FALSE(comp(inputs[1], inputs[1]));
-	}
+	EXPECT_TRUE(comp(inputs[0], inputs[1]));
+	EXPECT_TRUE(comp(inputs[1], inputs[1]));
+	EXPECT_FALSE(comp(inputs[1], inputs[0]));
 }
 
 TEST_F(WordFixture, WordEqual) {
-	for (int i = 0; i < 10; i++) {
-		EXPECT_TRUE(isEqual(inputs[0], inputs[0]));
-		EXPECT_FALSE(isEqual(inputs[0], inputs[1]));
-	}
+	EXPECT_TRUE(isEqual(inputs[0], inputs[0]));
+	EXPECT_FALSE(isEqual(inputs[0], inputs[1]));
 }
 
 TEST_F(WordFixture, WordCopy) {
-	for (int i = 0; i < 10; i++) {
-		char newWord[101];
-		copy(inputs[0], newWord);
-		EXPECT_TRUE(strcmp(inputs[0], newWord) == 0);
-	}
+	char newWord[101];
+	copy(inputs[0], newWord);
+	EXPECT_TRUE(strcmp(inputs[0], newWord) == 0);
 }
 
 TEST_F(SearchFixture, WordSearch) {
-	for (int i = 0; i < 10; i++) {
-		int randIndx = rand() % words;
-		int prevOccur = pairArr[randIndx].occurance;
-		EXPECT_TRUE(search(pairArr[randIndx].word));
-		EXPECT_TRUE(pairArr[randIndx].occurance - prevOccur == 1);
-	}
+	int randIndx = rand() % words;
+	int prevOccur = pairArr[randIndx].occurance;
+	EXPECT_TRUE(search(pairArr[randIndx].word));
+	EXPECT_TRUE(pairArr[randIndx].occurance - prevOccur == 1);
 	EXPECT_FALSE(search(newWord));
 }
 
