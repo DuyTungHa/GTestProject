@@ -3,6 +3,7 @@
 #include "testCaseGenerator.h"
 #include <vector>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -25,9 +26,11 @@ struct SearchFixture : public testing::TestWithParam<int> {
 	void SetUp() {
 		nextPos = words = rand() % 6;
 		inputs = getInputsAlpha(words + 1);
+		// The first 5 inputs are used to populate pairArr
 		for (int i = 0; i < words; i++) {
 			strcpy(pairArr[i].word, inputs[i]);
 		}
+		// The last input is used to populate a new word not in the pairArr
 		strcpy(newWord, inputs.back());
 	}
 	void TearDown() {
@@ -43,11 +46,49 @@ struct SearchFixture : public testing::TestWithParam<int> {
 	}
 };
 
+struct ReadWordFixture : public testing::TestWithParam<int> {
+	vector<Pair*> inputs;
+	vector<string> text;
+	ifstream ifs;
+	void SetUp() { 
+		srand(unsigned(time(0)));
+		nextPos = words = rand() % 6 + 1;
+		inputs = getInputsComplete(words);
+		for (Pair* p : inputs) {
+			for (int i = 0; i < p->occurance; i++) {
+				text.push_back(string(p->word));
+			}
+		}
+		random_shuffle(text.begin(), text.end());
+		ofstream ofs;
+		ofs.open("test.txt", ofstream::out | ofstream::trunc);
+		for (string w : text) {
+			ofs << w << " ";
+		}
+		ofs.close();
+		ifs.open("test.txt", ofstream::in);
+	}
+	void TearDown() {
+		ifs.close();
+		for (int i = 0; i < words; i++) {
+			pairArr[i].word[0] = '\0';
+			pairArr[i].occurance = 0;
+		}
+		nextPos = words = 0;
+		while (!inputs.empty()) {
+			delete inputs.back();
+			inputs.pop_back();
+		}
+	}
+};
+
 // Run randomized test multiple times
 INSTANTIATE_TEST_CASE_P(Instantiation, WordFixture, ::testing::Range(1, 11), );
 INSTANTIATE_TEST_CASE_P(Instantiation, SearchFixture, ::testing::Range(1, 11), );
+INSTANTIATE_TEST_CASE_P(Instantiation, ReadWordFixture, ::testing::Range(1, 11), );
 
 TEST_F(WordFixture, WordCompare) {
+	// Input[0] > Input[1]
 	EXPECT_TRUE(comp(inputs[0], inputs[1]));
 	EXPECT_TRUE(comp(inputs[1], inputs[1]));
 	EXPECT_FALSE(comp(inputs[1], inputs[0]));
@@ -65,10 +106,12 @@ TEST_F(WordFixture, WordCopy) {
 }
 
 TEST_F(SearchFixture, WordSearch) {
+	// Randomly choose an existing word in pairArr and search for it
 	int randIndx = rand() % words;
 	int prevOccur = pairArr[randIndx].occurance;
 	EXPECT_TRUE(search(pairArr[randIndx].word));
 	EXPECT_TRUE(pairArr[randIndx].occurance - prevOccur == 1);
+	// Search for new word
 	EXPECT_FALSE(search(newWord));
 }
 
@@ -77,10 +120,49 @@ TEST_F(SearchFixture, WordProcess) {
 	int prevOccur = pairArr[randIndx].occurance;
 	int prevWords = words;
 	int prevNextPos = nextPos;
+	// Randomly choose an existing word in pairArr and process it
 	process(pairArr[randIndx].word, 0);
 	EXPECT_EQ(prevWords, words);
 	EXPECT_EQ(prevNextPos, nextPos);
+	// Process a new word
 	process(newWord, 0);
 	EXPECT_EQ(prevWords, words - 1);
 	EXPECT_EQ(prevNextPos, nextPos - 1);
 }
+
+TEST_F(ReadWordFixture, ReadWordsLoc) {
+	// One of the words in the input
+	int randIdx = rand() % words;
+	string word = string(inputs[randIdx]->word);
+	int checkNextLoc = 0;
+	int checkloc[100]; // correct location array
+	int location[100];
+	
+	for (int i = 0; i < text.size(); i++) {
+		if (text[i] == word)
+			checkloc[checkNextLoc++] = i;
+	}
+
+	int nextLoc = readWords(ifs, location, word);
+
+	EXPECT_EQ(nextLoc, inputs[randIdx]->occurance);
+	for (int i = 0; i < nextLoc; i++) {
+		EXPECT_EQ(checkloc[i], location[i]);
+	}
+}
+
+TEST_F(ReadWordFixture, ReadWordsPair) {
+	readWords(ifs);
+	for (int i = 0; i < words; i++) {
+		cout << pairArr[i].word << endl;
+		bool found = false;
+		for (Pair* p : inputs) {
+			if (string(p->word) == string(pairArr[i].word) && p->occurance == pairArr[i].occurance) {
+				found = true;
+				break;
+			}
+		}
+		EXPECT_TRUE(found);
+	}
+}
+
