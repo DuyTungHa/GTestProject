@@ -8,6 +8,8 @@
 #include <iostream>
 #include "wordSort.h"
 
+std::string getPunct();
+
 std::vector<char*> getInputsAlpha(int);
 
 std::vector<Pair*> getInputsComplete(int);

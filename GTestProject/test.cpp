@@ -24,7 +24,8 @@ struct SearchFixture : public testing::TestWithParam<int> {
 	vector<char*> inputs;
 	char newWord[101];
 	void SetUp() {
-		nextPos = words = rand() % 6;
+		words = rand() % 6;
+		nextPos = words;
 		inputs = getInputsAlpha(words + 1);
 		// The first 5 inputs are used to populate pairArr
 		for (int i = 0; i < words; i++) {
@@ -38,7 +39,8 @@ struct SearchFixture : public testing::TestWithParam<int> {
 			pairArr[i].word[0] = '\0';
 			pairArr[i].occurance = 0;
 		}
-		nextPos = words = 0;
+		nextPos = 0;
+		words = 0;
 		while (!inputs.empty()) {
 			delete inputs.back();
 			inputs.pop_back();
@@ -52,18 +54,22 @@ struct ReadWordFixture : public testing::TestWithParam<int> {
 	ifstream ifs;
 	void SetUp() { 
 		srand(unsigned(time(0)));
-		nextPos = words = rand() % 6 + 1;
-		inputs = getInputsComplete(words);
+		inputs = getInputsComplete(rand() % 6 + 1);
+
+		// Generate text from distinct words
 		for (Pair* p : inputs) {
 			for (int i = 0; i < p->occurance; i++) {
 				text.push_back(string(p->word));
 			}
 		}
 		random_shuffle(text.begin(), text.end());
+
+		// Output text to file
 		ofstream ofs;
 		ofs.open("test.txt", ofstream::out | ofstream::trunc);
 		for (string w : text) {
-			ofs << w << " ";
+			w.insert(rand() % w.length(), getPunct()); // Add punctuation
+			ofs << w << getPunct() << " ";
 		}
 		ofs.close();
 		ifs.open("test.txt", ofstream::in);
@@ -74,7 +80,8 @@ struct ReadWordFixture : public testing::TestWithParam<int> {
 			pairArr[i].word[0] = '\0';
 			pairArr[i].occurance = 0;
 		}
-		nextPos = words = 0;
+		nextPos = 0;
+		words = 0;
 		while (!inputs.empty()) {
 			delete inputs.back();
 			inputs.pop_back();
@@ -132,7 +139,7 @@ TEST_F(SearchFixture, WordProcess) {
 
 TEST_F(ReadWordFixture, ReadWordsLoc) {
 	// One of the words in the input
-	int randIdx = rand() % words;
+	int randIdx = rand() % inputs.size();
 	string word = string(inputs[randIdx]->word);
 	int checkNextLoc = 0;
 	int checkloc[100]; // correct location array
@@ -145,7 +152,9 @@ TEST_F(ReadWordFixture, ReadWordsLoc) {
 
 	int nextLoc = readWords(ifs, location, word);
 
-	EXPECT_EQ(nextLoc, inputs[randIdx]->occurance);
+	EXPECT_EQ(words, text.size()); // Every word has been read
+	// Correctly captured all occurances of search word
+	EXPECT_EQ(nextLoc, inputs[randIdx]->occurance); 
 	for (int i = 0; i < nextLoc; i++) {
 		EXPECT_EQ(checkloc[i], location[i]);
 	}
@@ -154,7 +163,6 @@ TEST_F(ReadWordFixture, ReadWordsLoc) {
 TEST_F(ReadWordFixture, ReadWordsPair) {
 	readWords(ifs);
 	for (int i = 0; i < words; i++) {
-		cout << pairArr[i].word << endl;
 		bool found = false;
 		for (Pair* p : inputs) {
 			if (string(p->word) == string(pairArr[i].word) && p->occurance == pairArr[i].occurance) {
@@ -162,7 +170,10 @@ TEST_F(ReadWordFixture, ReadWordsPair) {
 				break;
 			}
 		}
+		// Number of words in pairArr is equal to that of words in inputs
 		EXPECT_TRUE(found);
 	}
+	// Check for number of distinct words
+	EXPECT_TRUE(words == nextPos && words == inputs.size());
 }
 

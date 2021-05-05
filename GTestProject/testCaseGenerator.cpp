@@ -7,12 +7,18 @@ std::vector<std::string> wordPool = { "alpaca","bee","cat","dog","eagle","frog",
 "otter","parrot","quail","raccoon","saola","tortoise","utonagan","vaquita","wasp",
 "xerus","yak","zebra" };
 
+std::vector<std::string> punctuation = { ".", ",", ":", ";", "'", "\""};
+
 int getRandom(int min, int max) {
 	if (min == max) return min;
 	static std::random_device randev;
 	static std::mt19937 mt_eng(randev());
 	std::uniform_int_distribution<int> uniform(min, max);
 	return uniform(mt_eng);
+}
+
+std::string getPunct() {
+	return punctuation[getRandom(0, punctuation.size() - 1)];
 }
 
 std::vector<char*> getInputsAlpha(int numberOfInputs) {
