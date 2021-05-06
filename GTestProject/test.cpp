@@ -128,11 +128,11 @@ TEST_F(SearchFixture, WordProcess) {
 	int prevWords = words;
 	int prevNextPos = nextPos;
 	// Randomly choose an existing word in pairArr and process it
-	process(pairArr[randIndx].word, 0);
+	process(pairArr[randIndx].word);
 	EXPECT_EQ(prevWords, words);
 	EXPECT_EQ(prevNextPos, nextPos);
 	// Process a new word
-	process(newWord, 0);
+	process(newWord);
 	EXPECT_EQ(prevWords, words - 1);
 	EXPECT_EQ(prevNextPos, nextPos - 1);
 }

@@ -34,7 +34,7 @@ bool completeSort(std::string); //sorts all words by alphabetical order and coun
 // declare minor methods
 int readWords(std::ifstream&, int[], std::string);
 void readWords(std::ifstream&);
-void process(char*, int);
+void process(char*);
 bool search(char*);
 TreeNode insertFirst(Pair);
 void insertAlpha(Pair, TreeNode*);
