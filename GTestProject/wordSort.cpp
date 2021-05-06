@@ -101,7 +101,7 @@ void readWords(std::ifstream& file) {
         else if (inword) {
             if (isspace(c)) {
                 word[len] = '\0';
-                process(word, len);
+                process(word);
                 len = 0;
                 inword = false;
             }
@@ -118,7 +118,7 @@ void readWords(std::ifstream& file) {
     }
     if (len > 0) {
         word[len] = '\0';
-        process(word, len);
+        process(word);
     }
     rWBool = true;
 }
@@ -168,7 +168,7 @@ int readWords(std::ifstream& file, int locations[], std::string searchWord) {
     return nextLocation;
 }
 
-void process(char* word, int len) {
+void process(char* word) {
     if (!search(word)) {
         words++;
         Pair p;
