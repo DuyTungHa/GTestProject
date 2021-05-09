@@ -3,10 +3,12 @@
 #define WORDSORT_H
 
 // include required libraries
+#include "pch.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <stdio.h>
+#include <vector>
 #include <cctype>
 
 // define keywords
@@ -21,8 +23,8 @@ struct Pair {
 
 struct TreeNode {
     Pair pair;
-    TreeNode* left;
-    TreeNode* right;
+    TreeNode* left = nullptr;
+    TreeNode* right = nullptr;
 };
 
 // declare major methods (will all return 1 on "pass" and 0 on any fail)
@@ -36,14 +38,14 @@ int readWords(std::ifstream&, int[], std::string);
 void readWords(std::ifstream&);
 void process(char*);
 bool search(char*);
-TreeNode insertFirst(Pair);
-void insertAlpha(Pair, TreeNode*);
-void insertComplete(Pair, TreeNode*);
+TreeNode* insertFirst(Pair);
+TreeNode* insertAlpha(Pair, TreeNode*);
+TreeNode* insertComplete(Pair, TreeNode*);
 bool isEqual(char*, char*);
 void copy(char*, char*);
 bool comp(char*, char*);
-void readAlpha(TreeNode*, std::ofstream&);
-void readComplete(TreeNode*, std::ofstream&);
+void readAlpha(TreeNode*, std::ofstream&, std::vector<Pair*>&);
+void readComplete(TreeNode*, std::ofstream&, std::vector<Pair*>&);
 void deleteTree(TreeNode*);
 
 

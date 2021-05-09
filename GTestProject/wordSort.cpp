@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "wordSort.h"
 
 // define global variables
@@ -48,19 +49,20 @@ bool alphaSort(std::string fileName) {
     std::cout << "\nrunning alphaSort\n..." << std::endl;
     std::ifstream file(fileName);
     readWords(file);
+    std::vector<Pair*> results;
 
-    TreeNode root = insertFirst(pairArr[0]);
-    TreeNode* rootPtr = &root;
+    TreeNode* rootPtr = insertFirst(pairArr[0]);
 
     for (int i = 1; i < words; i++) {
         insertAlpha(pairArr[i], rootPtr);
     }
 
-    readAlpha(rootPtr, writeFileAlpha);
+    readAlpha(rootPtr, writeFileAlpha, results);
 
     deleteTree(rootPtr);
 
     file.close();
+    delete rootPtr;
     std::cout << "finished alphaSort\n" << std::endl;
     return 1;
 }
@@ -69,19 +71,20 @@ bool completeSort(std::string fileName) {
     std::cout << "\nrunning completeSort\n..." << std::endl;
     std::ifstream file(fileName);
     readWords(file);
+    std::vector<Pair*> results;
 
-    TreeNode root = insertFirst(pairArr[0]);
-    TreeNode* rootPtr = &root;
+    TreeNode* rootPtr = insertFirst(pairArr[0]);
 
     for (int i = 1; i < words; i++) {
         insertComplete(pairArr[i], rootPtr);
     }
 
-    readComplete(rootPtr, writeFileComplete);
+    readComplete(rootPtr, writeFileComplete, results);
 
     deleteTree(rootPtr);
 
     file.close();
+    delete rootPtr;
     std::cout << "finished completeSort\n" << std::endl;
     return 1;
 }
@@ -190,9 +193,9 @@ bool search(char* word) {
     return false;
 }
 
-TreeNode insertFirst(Pair p) {
-    TreeNode start;
-    start.pair = p;
+TreeNode* insertFirst(Pair p) {
+    TreeNode* start = new TreeNode;
+    start->pair = p;
     return start;
 
 }
@@ -218,7 +221,7 @@ void copy(char* word, char* p) {
     *p++ = '\0';
 }
 
-void insertAlpha(Pair p, TreeNode* node) {
+TreeNode* insertAlpha(Pair p, TreeNode* node) {
     TreeNode* next;
     bool left;
 
@@ -240,23 +243,26 @@ void insertAlpha(Pair p, TreeNode* node) {
             node->left = next;
         else
             node->right = next;
+        return next;
     }
+
 }
 
-void readAlpha(TreeNode* node, std::ofstream& writeFile) {
+void readAlpha(TreeNode* node, std::ofstream& writeFile, std::vector<Pair*>& results) {
 
     if (node == nullptr) {
         return;
     }
-    readAlpha(node->left, writeFile);
+    readAlpha(node->left, writeFile, results);
     if (node->pair.word[0] != '\0') {
+        results.push_back(&node->pair);
         writeFile << node->pair.word;
         writeFile << '\n';
     }
-    readAlpha(node->right, writeFile);
+    readAlpha(node->right, writeFile, results);
 }
 
-void insertComplete(Pair p, TreeNode* node) {
+TreeNode* insertComplete(Pair p, TreeNode* node) {
     TreeNode* next;
     bool left;
     if (p.occurance == node->pair.occurance) {
@@ -287,21 +293,24 @@ void insertComplete(Pair p, TreeNode* node) {
             node->left = next;
         else
             node->right = next;
+        return next;
     }
+
 }
 
-void readComplete(TreeNode* node, std::ofstream& writeFile) {
+void readComplete(TreeNode* node, std::ofstream& writeFile, std::vector<Pair*>& results) {
     if (node == nullptr) {
         return;
     }
-    readComplete(node->left, writeFile);
+    readComplete(node->left, writeFile, results);
     if (node->pair.word[0] != '\0') {
+        results.push_back(&node->pair);
         writeFile << node->pair.word;
         writeFile << " - ";
         writeFile << node->pair.occurance;
         writeFile << '\n';
     }
-    readComplete(node->right, writeFile);
+    readComplete(node->right, writeFile, results);
 }
 
 bool comp(char* word1, char* word2) {

@@ -1,4 +1,4 @@
-
+#include "pch.h"
 #include "testCaseGenerator.h"
 #include "wordSort.h"
 
@@ -31,6 +31,22 @@ std::vector<char*> getInputsAlpha(int numberOfInputs) {
 		char* word;
 		word = new char[sWord.length() + 1];
 		inputs.push_back(strcpy(word, sWord.c_str()));
+	}
+
+	return inputs;
+}
+
+std::vector<Pair*> getInputsAlphaPairArr(int numberOfInputs) {
+	int range = wordPool.size() / numberOfInputs;
+
+	std::vector<Pair*> inputs;
+	for (int i = 0; i < numberOfInputs; i++) {
+		int index = range * i + getRandom(1, range) - 1;
+		std::string sWord = wordPool[index];
+		Pair* input = new Pair;
+		strcpy(input->word, sWord.c_str());
+		input->occurance = getRandom(1,50);
+		inputs.push_back(input);
 	}
 
 	return inputs;

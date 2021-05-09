@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <iostream>
 
 using namespace std;
 
@@ -89,10 +90,111 @@ struct ReadWordFixture : public testing::TestWithParam<int> {
 	}
 };
 
+struct ReadAlphaFixture : public testing::TestWithParam<int> {
+	TreeNode* root;
+	ofstream writeFile;
+	vector<Pair*> inputs;
+	vector<Pair*> results;
+	void SetUp() {
+		//create a list of pairs including words and their occurances which was sorted alphabetically
+		inputs = getInputsAlphaPairArr(15);
+		//create tree root
+		root = insertFirst(*inputs[0]);
+		//add pairs to the tree
+		for (int i = 1; i < inputs.size(); i++) {
+			insertAlpha(*inputs[i], root);
+		}
+		
+		writeFile.open("ReadAlpha.txt", ofstream::out);
+	}
+	void TearDown() {
+		writeFile.close();
+		for (int i = 0; i < words; i++) {
+			pairArr[i].word[0] = '\0';
+			pairArr[i].occurance = 0;
+		}
+		nextPos = 0;
+		words = 0;
+		while (!inputs.empty()) {
+			delete inputs.back();
+			inputs.pop_back();
+		}
+		delete root;
+	}
+};
+
+struct ReadCompleteFixture : public testing::TestWithParam<int> {
+	TreeNode* root;
+	ofstream writeFile;
+	vector<Pair*> inputs;
+	vector<Pair*> results;
+	void SetUp() {
+		//create a list of pairs including words and their occurances which was sorted alphabetically
+		inputs = getInputsComplete(15);
+		//create tree root
+		root = insertFirst(*inputs[0]);
+		//add pairs to the tree
+		for (int i = 1; i < inputs.size(); i++) {
+			insertComplete(*inputs[i], root);
+		}
+
+		writeFile.open("ReadComplete.txt", ofstream::out);
+	}
+	void TearDown() {
+		writeFile.close();
+		for (int i = 0; i < words; i++) {
+			pairArr[i].word[0] = '\0';
+			pairArr[i].occurance = 0;
+		}
+		nextPos = 0;
+		words = 0;
+		while (!inputs.empty()) {
+			delete inputs.back();
+			inputs.pop_back();
+		}
+		delete root;
+	}
+};
+
+struct DeleteTreeFixture : public testing::TestWithParam<int> {
+	TreeNode* root;
+	vector<Pair*> inputs;
+	vector<TreeNode*> nodes;
+	void SetUp() {
+		//create a list of pairs including words and their occurances which was sorted alphabetically
+		inputs = getInputsComplete(15);
+		//create tree root
+		root = insertFirst(*inputs[0]);
+		nodes.push_back(root);
+		//add pairs to the tree
+		for (int i = 1; i < inputs.size(); i++) {
+			nodes.push_back(insertComplete(*inputs[i], root));
+		}
+	}
+	void TearDown() {
+		for (int i = 0; i < words; i++) {
+			pairArr[i].word[0] = '\0';
+			pairArr[i].occurance = 0;
+		}
+		nextPos = 0;
+		words = 0;
+		while (!inputs.empty()) {
+			delete inputs.back();
+			inputs.pop_back();
+		}
+		delete root;
+	}
+};
+
 // Run randomized test multiple times
 INSTANTIATE_TEST_CASE_P(Instantiation, WordFixture, ::testing::Range(1, 11), );
 INSTANTIATE_TEST_CASE_P(Instantiation, SearchFixture, ::testing::Range(1, 11), );
 INSTANTIATE_TEST_CASE_P(Instantiation, ReadWordFixture, ::testing::Range(1, 11), );
+INSTANTIATE_TEST_CASE_P(Instantiation, ReadAlphaFixture, ::testing::Range(1, 11), );
+INSTANTIATE_TEST_CASE_P(Instantiation, ReadCompleteFixture, ::testing::Range(1, 11), );
+INSTANTIATE_TEST_CASE_P(Instantiation, DeleteTreeFixture, ::testing::Range(1, 11), );
+
+
 
 TEST_F(WordFixture, WordCompare) {
 	// Input[0] > Input[1]
@@ -177,3 +279,31 @@ TEST_F(ReadWordFixture, ReadWordsPair) {
 	EXPECT_TRUE(words == nextPos && words == inputs.size());
 }
 
+TEST_F(ReadAlphaFixture, ReadBSTTreeAlphabetically) {
+	readAlpha(root, writeFile, results);
+	for (int i = 0; i < results.size(); i++) {
+		EXPECT_TRUE(isEqual(results[i]->word, inputs[i]->word));
+	}
+}
+
+/*
+TEST_F(ReadCompleteFixture, ReadBSTTreeCompletely) {
+	readComplete(root, writeFile, results);
+	for (int i = 0; i < results.size(); i++) {
+		EXPECT_TRUE(isEqual(results[i]->word, inputs[i]->word));
+		EXPECT_TRUE(results[i]->occurance == inputs[i]->occurance);		
+	}
+}
+*/
+/*
+TEST_F(DeleteTreeFixture, DeleteTree) {
+	delete(root);
+	char expectedWord[101];
+	expectedWord[0] = '\0';
+	int expectedOccurance = 0;
+	for (int i = 0; i < nodes.size(); i++) {
+		EXPECT_TRUE(isEqual(nodes[i]->pair.word, expectedWord));
+		EXPECT_TRUE(nodes[i]->pair.occurance == expectedOccurance);
+	}
+}
+*/
