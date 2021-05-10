@@ -38,6 +38,7 @@
     <ClInclude Include="wordSort.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -54,7 +55,6 @@
   <ItemGroup>
     <Text Include="alphaSort.txt" />
     <Text Include="completeSort.txt" />
-    <Text Include="test.txt" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
