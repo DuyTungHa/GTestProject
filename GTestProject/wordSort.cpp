@@ -266,7 +266,7 @@ TreeNode* insertComplete(Pair p, TreeNode* node) {
     TreeNode* next;
     bool left;
     if (p.occurance == node->pair.occurance) {
-        if (comp(p.word, node->pair.word)) {
+        if (!comp(p.word, node->pair.word)) {
             next = node->left;
             left = true;
         }
