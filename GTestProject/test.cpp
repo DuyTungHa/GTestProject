@@ -286,6 +286,7 @@ TEST_F(ReadAlphaFixture, ReadBSTTreeAlphabetically) {
 	}
 }
 
+/* TEST*/
 /*
 TEST_F(ReadCompleteFixture, ReadBSTTreeCompletely) {
 	readComplete(root, writeFile, results);
