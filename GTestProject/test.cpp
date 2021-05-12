@@ -186,6 +186,58 @@ struct DeleteTreeFixture : public testing::TestWithParam<int> {
 	}
 };
 
+struct InsertNodeAlphaFixture : public testing::TestWithParam<int> {
+	TreeNode* root;
+	vector<Pair*> inputs;
+
+	void SetUp() {
+		//create a list of pairs including words and their occurances which was sorted alphabetically
+		inputs = getInputsAlphaPairArr(3);
+		//create tree root
+		root = insertFirst(*inputs[0]);
+	}
+
+	void TearDown() {
+		for (int i = 0; i < words; i++) {
+			pairArr[i].word[0] = '\0';
+			pairArr[i].occurance = 0;
+		}
+		nextPos = 0;
+		words = 0;
+		while (!inputs.empty()) {
+			delete inputs.back();
+			inputs.pop_back();
+		}
+		delete root;
+	}
+};
+
+struct InsertNodeCompleteFixture : public testing::TestWithParam<int> {
+	TreeNode* root;
+	vector<Pair*> inputs;
+
+	void SetUp() {
+		//create a list of pairs including words and their occurances which was sorted alphabetically
+		inputs = getInputsComplete(3);
+		//create tree root
+		root = insertFirst(*inputs[0]);
+	}
+
+	void TearDown() {
+		for (int i = 0; i < words; i++) {
+			pairArr[i].word[0] = '\0';
+			pairArr[i].occurance = 0;
+		}
+		nextPos = 0;
+		words = 0;
+		while (!inputs.empty()) {
+			delete inputs.back();
+			inputs.pop_back();
+		}
+		delete root;
+	}
+};
+
 // Run randomized test multiple times
 INSTANTIATE_TEST_CASE_P(Instantiation, WordFixture, ::testing::Range(1, 11), );
 INSTANTIATE_TEST_CASE_P(Instantiation, SearchFixture, ::testing::Range(1, 11), );
@@ -193,8 +245,6 @@ INSTANTIATE_TEST_CASE_P(Instantiation, ReadWordFixture, ::testing::Range(1, 11),
 INSTANTIATE_TEST_CASE_P(Instantiation, ReadAlphaFixture, ::testing::Range(1, 11), );
 INSTANTIATE_TEST_CASE_P(Instantiation, ReadCompleteFixture, ::testing::Range(1, 11), );
 INSTANTIATE_TEST_CASE_P(Instantiation, DeleteTreeFixture, ::testing::Range(1, 11), );
-
-
 
 TEST_F(WordFixture, WordCompare) {
 	// Input[0] > Input[1]
@@ -286,7 +336,52 @@ TEST_F(ReadAlphaFixture, ReadBSTTreeAlphabetically) {
 	}
 }
 
-/* TEST*/
+TEST_F(InsertNodeAlphaFixture, insertFirst) {
+	EXPECT_EQ(root->pair.occurance, inputs[0]->occurance);
+	EXPECT_EQ(comp(root->pair.word, inputs[0]->word), true);
+	EXPECT_EQ(root->left, nullptr);
+	EXPECT_EQ(root->right, nullptr);
+}
+
+TEST_F(InsertNodeAlphaFixture, insertAlpha) {
+	//The inputs array have the words arranged in alphabetical order
+	//The insertAlpha function put "smaller" word on the left and "bigger" word on the right
+	for (int i = 1; i < inputs.size(); i++) {
+		insertAlpha(*inputs[i], root);
+	}
+	
+	TreeNode* nodeCursor = root;
+	for (int i = 0; i < inputs.size() - 1; i++) {
+		EXPECT_TRUE(nodeCursor->pair.occurance == inputs[i]->occurance);
+		EXPECT_TRUE(isEqual(nodeCursor->pair.word, inputs[i]->word));
+		EXPECT_FALSE(comp(inputs[i+1]->word, inputs[i]->word));
+		EXPECT_TRUE(nodeCursor->left == nullptr);
+		EXPECT_FALSE(nodeCursor->right == nullptr);
+		nodeCursor = nodeCursor->right;
+	}
+}
+
+/*
+TEST_F(InsertNodeCompleteFixture, insertComplete) {
+	//The inputs array have the words arranged in alphanumeric order
+	//The insertAlpha function put "smaller" word on the left and "bigger" word on the right
+	for (int i = 1; i < inputs.size(); i++) {
+		insertComplete(*inputs[i], root);
+	}
+
+	TreeNode* nodeCursor = root;
+	for (int i = 0; i < inputs.size() - 1; i++) {
+		EXPECT_TRUE(nodeCursor->pair.occurance == inputs[i]->occurance);
+		EXPECT_TRUE(isEqual(nodeCursor->pair.word, inputs[i]->word));
+		EXPECT_FALSE(comp(inputs[i + 1]->word, inputs[i]->word));
+		EXPECT_TRUE(nodeCursor->left == nullptr);
+		EXPECT_FALSE(nodeCursor->right == nullptr);
+		nodeCursor = nodeCursor->right;
+	}
+}
+*/
+
+
 /*
 TEST_F(ReadCompleteFixture, ReadBSTTreeCompletely) {
 	readComplete(root, writeFile, results);
