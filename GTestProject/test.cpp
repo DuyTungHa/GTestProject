@@ -4,9 +4,11 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <random>
 #include <iostream>
 
 using namespace std;
+void checkNode(TreeNode* n);
 
 struct WordFixture : public testing::TestWithParam<int> {
 	vector<char*> inputs;
@@ -192,9 +194,8 @@ struct InsertNodeAlphaFixture : public testing::TestWithParam<int> {
 
 	void SetUp() {
 		//create a list of pairs including words and their occurances which was sorted alphabetically
-		inputs = getInputsAlphaPairArr(3);
+		inputs = getInputsAlphaPairArr(10);
 		//create tree root
-		root = insertFirst(*inputs[0]);
 	}
 
 	void TearDown() {
@@ -245,6 +246,7 @@ INSTANTIATE_TEST_CASE_P(Instantiation, ReadWordFixture, ::testing::Range(1, 11),
 INSTANTIATE_TEST_CASE_P(Instantiation, ReadAlphaFixture, ::testing::Range(1, 11), );
 INSTANTIATE_TEST_CASE_P(Instantiation, ReadCompleteFixture, ::testing::Range(1, 11), );
 INSTANTIATE_TEST_CASE_P(Instantiation, DeleteTreeFixture, ::testing::Range(1, 11), );
+INSTANTIATE_TEST_CASE_P(Instantiation, InsertNodeAlphaFixture, ::testing::Range(1, 11), );
 
 TEST_F(WordFixture, WordCompare) {
 	// Input[0] > Input[1]
@@ -337,6 +339,7 @@ TEST_F(ReadAlphaFixture, ReadBSTTreeAlphabetically) {
 }
 
 TEST_F(InsertNodeAlphaFixture, insertFirst) {
+	root = insertFirst(*inputs[0]);
 	EXPECT_EQ(root->pair.occurance, inputs[0]->occurance);
 	EXPECT_EQ(comp(root->pair.word, inputs[0]->word), true);
 	EXPECT_EQ(root->left, nullptr);
@@ -344,20 +347,41 @@ TEST_F(InsertNodeAlphaFixture, insertFirst) {
 }
 
 TEST_F(InsertNodeAlphaFixture, insertAlpha) {
-	//The inputs array have the words arranged in alphabetical order
-	//The insertAlpha function put "smaller" word on the left and "bigger" word on the right
-	for (int i = 1; i < inputs.size(); i++) {
+	//Shuffle the inputs array. 
+	//By running this function multiple times, we can test a lot of different combination
+	auto rng = default_random_engine{};
+	shuffle(begin(inputs), end(inputs), rng);
+	
+	//Create the root using the last inputs
+	//Reason for using back() and insert backwards: 
+	//	In case we need to pass the inputs array down the recursion,
+	//	using vector.pop_back() is less expensive
+	root = insertFirst(*inputs.back());
+
+	//Insert the rest of the nodes
+	for (int i = inputs.size() - 2; i >= 0; i--) {
 		insertAlpha(*inputs[i], root);
 	}
 	
-	TreeNode* nodeCursor = root;
-	for (int i = 0; i < inputs.size() - 1; i++) {
-		EXPECT_TRUE(nodeCursor->pair.occurance == inputs[i]->occurance);
-		EXPECT_TRUE(isEqual(nodeCursor->pair.word, inputs[i]->word));
-		EXPECT_FALSE(comp(inputs[i+1]->word, inputs[i]->word));
-		EXPECT_TRUE(nodeCursor->left == nullptr);
-		EXPECT_FALSE(nodeCursor->right == nullptr);
-		nodeCursor = nodeCursor->right;
+	//Recursively check the nodes
+	checkNode(root);
+}
+
+// Recursion for InsertAlpha
+void checkNode(TreeNode* n) {
+	if (n->left != nullptr) {
+		EXPECT_TRUE(comp(n->left->pair.word, n->pair.word));
+		checkNode(n->left);
+	}
+	else {
+		EXPECT_TRUE(n->left == nullptr);
+	}
+
+	if (n->right != nullptr) {
+		EXPECT_FALSE(comp(n->right->pair.word, n->pair.word));
+		checkNode(n->right);
+	} else {
+		EXPECT_TRUE(n->right == nullptr);
 	}
 }
 
