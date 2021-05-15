@@ -8,6 +8,7 @@
 
 using namespace std;
 void checkNode(TreeNode* n);
+void checkNodeComplete(TreeNode* n);
 
 struct WordFixture : public testing::TestWithParam<int> {
 	vector<char*> inputs;
@@ -43,7 +44,6 @@ struct SearchFixture : public testing::TestWithParam<int> {
 		}
 		nextPos = 0;
 		words = 0;
-		rWBool = 0;
 		while (!inputs.empty()) {
 			delete inputs.back();
 			inputs.pop_back();
@@ -85,7 +85,6 @@ struct ReadWordFixture : public testing::TestWithParam<int> {
 		}
 		nextPos = 0;
 		words = 0;
-		rWBool = 0;
 		while (!inputs.empty()) {
 			delete inputs.back();
 			inputs.pop_back();
@@ -96,18 +95,11 @@ struct ReadWordFixture : public testing::TestWithParam<int> {
 struct ReadAlphaFixture : public testing::TestWithParam<int> {
 	TreeNode* root;
 	ofstream writeFile;
-	vector<Pair*> oracle;
 	vector<Pair*> inputs;
 	vector<Pair*> results;
 	void SetUp() {
 		//create a list of pairs including words and their occurances which was sorted alphabetically
-		oracle = getInputsAlphaPairArr(15);
-		for (int i = 0; i < oracle.size(); i++) {
-			inputs.push_back(oracle[i]);
-		}
-		//shuffle the places of pairs 
-		auto rng = default_random_engine{};
-		shuffle(begin(inputs), end(inputs), rng);
+		inputs = getInputsAlphaPairArr(15);
 		//create tree root
 		root = insertFirst(*inputs[0]);
 		//add pairs to the tree
@@ -125,10 +117,9 @@ struct ReadAlphaFixture : public testing::TestWithParam<int> {
 		}
 		nextPos = 0;
 		words = 0;
-		rWBool = 0;
-		while (!oracle.empty()) {
-			delete oracle.back();
-			oracle.pop_back();
+		while (!inputs.empty()) {
+			delete inputs.back();
+			inputs.pop_back();
 		}
 		delete root;
 	}
@@ -137,18 +128,11 @@ struct ReadAlphaFixture : public testing::TestWithParam<int> {
 struct ReadCompleteFixture : public testing::TestWithParam<int> {
 	TreeNode* root;
 	ofstream writeFile;
-	vector<Pair*> oracle;
 	vector<Pair*> inputs;
 	vector<Pair*> results;
 	void SetUp() {
 		//create a list of pairs including words and their occurances which was sorted alphabetically
-		oracle = getInputsComplete(15);
-		for (int i = 0; i < oracle.size(); i++) {
-			inputs.push_back(oracle[i]);
-		}
-		//shuffle the places of pairs 
-		auto rng = default_random_engine{};
-		shuffle(begin(inputs), end(inputs), rng);
+		inputs = getInputsComplete(15);
 		//create tree root
 		root = insertFirst(*inputs[0]);
 		//add pairs to the tree
@@ -166,10 +150,9 @@ struct ReadCompleteFixture : public testing::TestWithParam<int> {
 		}
 		nextPos = 0;
 		words = 0;
-		rWBool = 0;
-		while (!oracle.empty()) {
-			delete oracle.back();
-			oracle.pop_back();
+		while (!inputs.empty()) {
+			delete inputs.back();
+			inputs.pop_back();
 		}
 		delete root;
 	}
@@ -197,7 +180,6 @@ struct DeleteTreeFixture : public testing::TestWithParam<int> {
 		}
 		nextPos = 0;
 		words = 0;
-		rWBool = 0;
 		while (!inputs.empty()) {
 			delete inputs.back();
 			inputs.pop_back();
@@ -206,25 +188,13 @@ struct DeleteTreeFixture : public testing::TestWithParam<int> {
 	}
 };
 
-struct AlphaSortFixture : public testing::TestWithParam<int> {
-	vector<Pair*> oracle;
+struct InsertNodeAlphaFixture : public testing::TestWithParam<int> {
+	TreeNode* root;
 	vector<Pair*> inputs;
+
 	void SetUp() {
-		//create inputs
-		oracle = getInputsAlphaPairArr(15);
-		for (int i = 0; i < oracle.size(); i++) {
-			inputs.push_back(oracle[i]);
-		}
-		//shuffle the places of pairs 
-		auto rng = default_random_engine{};
-		shuffle(begin(inputs), end(inputs), rng);
-		
-		ofstream ofs;
-		ofs.open("test.txt");
-		for (int i = 0; i < inputs.size(); i++) {
-			ofs << inputs[i]->word << " ";
-		}
-		ofs.close();
+		//create a list of pairs including words and their occurances which was sorted alphabetically
+		inputs = getInputsAlphaPairArr(10);
 	}
 
 	void TearDown() {
@@ -234,35 +204,21 @@ struct AlphaSortFixture : public testing::TestWithParam<int> {
 		}
 		nextPos = 0;
 		words = 0;
-		rWBool = 0;
-		while (!oracle.empty()) {
-			delete oracle.back();
-			oracle.pop_back();
+		while (!inputs.empty()) {
+			delete inputs.back();
+			inputs.pop_back();
 		}
+		delete root;
 	}
 };
 
-struct CompleteSortFixture : public testing::TestWithParam<int> {
-	vector<Pair*> oracle;
+struct InsertNodeCompleteFixture : public testing::TestWithParam<int> {
+	TreeNode* root;
 	vector<Pair*> inputs;
-	void SetUp() {
-		//create inputs
-		oracle = getInputsComplete(15);
-		for (int i = 0; i < oracle.size(); i++) {
-			inputs.push_back(oracle[i]);
-		}
-		//shuffle the places of pairs 
-		auto rng = default_random_engine{};
-		shuffle(begin(inputs), end(inputs), rng);
 
-		ofstream ofs;
-		ofs.open("test.txt");
-		for (int i = 0; i < inputs.size(); i++) {
-			for (int j = 0; j < inputs[i]->occurance; j++) {
-				ofs << inputs[i]->word << " ";
-			}
-		}
-		ofs.close();
+	void SetUp() {
+		//create a list of pairs including words and their occurances which was sorted alphabetically
+		inputs = getInputsComplete(10);
 	}
 
 	void TearDown() {
@@ -272,11 +228,11 @@ struct CompleteSortFixture : public testing::TestWithParam<int> {
 		}
 		nextPos = 0;
 		words = 0;
-		rWBool = 0;
-		while (!oracle.empty()) {
-			delete oracle.back();
-			oracle.pop_back();
+		while (!inputs.empty()) {
+			delete inputs.back();
+			inputs.pop_back();
 		}
+		delete root;
 	}
 };
 
@@ -287,10 +243,7 @@ INSTANTIATE_TEST_CASE_P(Instantiation, ReadWordFixture, ::testing::Range(1, 11),
 INSTANTIATE_TEST_CASE_P(Instantiation, ReadAlphaFixture, ::testing::Range(1, 11), );
 INSTANTIATE_TEST_CASE_P(Instantiation, ReadCompleteFixture, ::testing::Range(1, 11), );
 INSTANTIATE_TEST_CASE_P(Instantiation, DeleteTreeFixture, ::testing::Range(1, 11), );
-INSTANTIATE_TEST_CASE_P(Instantiation, AlphaSortFixture, ::testing::Range(1, 11), );
-INSTANTIATE_TEST_CASE_P(Instantiation, CompleteSortFixture, ::testing::Range(1, 11), );
-
-
+INSTANTIATE_TEST_CASE_P(Instantiation, InsertNodeAlphaFixture, ::testing::Range(1, 11), );
 
 TEST_F(WordFixture, WordCompare) {
 	// Input[0] > Input[1]
@@ -377,21 +330,107 @@ TEST_F(ReadWordFixture, ReadWordsPair) {
 
 TEST_F(ReadAlphaFixture, ReadBSTTreeAlphabetically) {
 	readAlpha(root, writeFile, results);
-	for (int i = 0; i < oracle.size(); i++) {
-		EXPECT_TRUE(isEqual(results[i]->word, oracle[i]->word));
+	for (int i = 0; i < results.size(); i++) {
+		EXPECT_TRUE(isEqual(results[i]->word, inputs[i]->word));
 	}
 }
 
+TEST_F(InsertNodeAlphaFixture, insertFirst) {
+	root = insertFirst(*inputs[0]);
+	EXPECT_EQ(root->pair.occurance, inputs[0]->occurance);
+	EXPECT_EQ(comp(root->pair.word, inputs[0]->word), true);
+	EXPECT_EQ(root->left, nullptr);
+	EXPECT_EQ(root->right, nullptr);
+}
+
+TEST_F(InsertNodeAlphaFixture, insertAlpha) {
+	//Shuffle the inputs array. 
+	//By running this function multiple times, we can test a lot of different combination
+	auto rng = default_random_engine{};
+	shuffle(begin(inputs), end(inputs), rng);
+	
+	//Create the root using the last inputs
+	//Reason for using back() and insert backwards: 
+	//	In case we need to pass the inputs array down the recursion,
+	//	using vector.pop_back() is less expensive
+	root = insertFirst(*inputs.back());
+
+	//Insert the rest of the nodes
+	for (int i = inputs.size() - 2; i >= 0; i--) {
+		insertAlpha(*inputs[i], root);
+	}
+	
+	//Recursively check the nodes
+	checkNode(root);
+}
+
+// Recursion for InsertAlpha
+void checkNode(TreeNode* n) {
+	if (n->left != nullptr) {
+		EXPECT_TRUE(comp(n->left->pair.word, n->pair.word));
+		checkNode(n->left);
+	}
+	else {
+		EXPECT_TRUE(n->left == nullptr);
+	}
+
+	if (n->right != nullptr) {
+		EXPECT_FALSE(comp(n->right->pair.word, n->pair.word));
+		checkNode(n->right);
+	} else {
+		EXPECT_TRUE(n->right == nullptr);
+	}
+}
+
+TEST_F(InsertNodeCompleteFixture, insertComplete) {
+	//Shuffle the inputs array. 
+	//By running this function multiple times, we can test a lot of different combination
+	auto rng = default_random_engine{};
+	shuffle(begin(inputs), end(inputs), rng);
+	root = insertFirst(*inputs.back());
+
+	//Insert the rest of the nodes
+	for (int i = inputs.size() - 2; i >= 0; i--) {
+		insertComplete(*inputs[i], root);
+	}
+
+	//Recursively check the nodes
+	checkNodeComplete(root);
+}
+
+void checkNodeComplete(TreeNode* n) {
+	if (n->left != nullptr) {
+		EXPECT_TRUE(n->left->pair.occurance >= n->pair.occurance || 
+					!comp(n->left->pair.word, n->pair.word));
+		checkNodeComplete(n->left);
+	}
+	else {
+		EXPECT_TRUE(n->left == nullptr);
+	}
+
+	if (n->right != nullptr) {
+		EXPECT_TRUE(n->right->pair.occurance < n->pair.occurance || 
+					comp(n->right->pair.word, n->pair.word));
+		checkNodeComplete(n->right);
+	}
+	else {
+		EXPECT_TRUE(n->right == nullptr);
+	}
+}
+
+
+/*
 TEST_F(ReadCompleteFixture, ReadBSTTreeCompletely) {
 	readComplete(root, writeFile, results);
-	for (int i = 0; i < oracle.size(); i++) {
-		EXPECT_TRUE(isEqual(results[i]->word, oracle[i]->word));
-		EXPECT_TRUE(results[i]->occurance == oracle[i]->occurance);
+	for (int i = 0; i < results.size(); i++) {
+		EXPECT_TRUE(isEqual(results[i]->word, inputs[i]->word));
+		EXPECT_TRUE(results[i]->occurance == inputs[i]->occurance);		
 	}
 }
-
+*/
+/*
 TEST_F(DeleteTreeFixture, DeleteTree) {
-	deleteTree(root);
+	delete(root);
 	char expectedWord[101];
 	expectedWord[0] = '\0';
 	int expectedOccurance = 0;
@@ -400,35 +439,4 @@ TEST_F(DeleteTreeFixture, DeleteTree) {
 		EXPECT_TRUE(nodes[i]->pair.occurance == expectedOccurance);
 	}
 }
-
-TEST_F(AlphaSortFixture, SortAlphabetically) {
-	alphaSort("test.txt");
-	ifstream inFile("alphaSort.txt");
-	int lines = 0;
-	string line;
-	while (getline(inFile, line)) {
-		char word[101];
-		strcpy(word, line.c_str());
-		EXPECT_TRUE(isEqual(oracle[lines]->word, word));
-		lines++;
-	}
-	//to ensure the alphaSort.txt is not empty
-	EXPECT_TRUE(lines > 0);
-
-	inFile.close();
-}
-
-TEST_F(CompleteSortFixture, SortCompletely) {
-	completeSort("test.txt");
-	ifstream inFile("completeSort.txt");
-	int lines = 0;
-	string line;
-	while (getline(inFile, line, '\n')) {
-		char word[101];
-		strcpy(word, line.substr(0, line.find(" - ")).c_str());
-		EXPECT_TRUE(isEqual(oracle[lines]->word, word));
-		EXPECT_TRUE(oracle[lines]->occurance == stoi(line.substr(line.find(" - ") + 3, line.length())));
-		lines++;
-	}
-	inFile.close();
-}
+*/
