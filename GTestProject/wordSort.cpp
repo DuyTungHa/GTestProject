@@ -6,8 +6,6 @@ Pair pairArr[SIZE];
 int words = 0;
 int nextPos = 0;
 bool rWBool = 0;
-std::ofstream writeFileAlpha("alphaSort.txt"); //declared up here cause for some reasons insertAlpha seg faulted if it was declared in alphaSort, no idea why
-std::ofstream writeFileComplete("completeSort.txt");
 
 bool count(std::string fileName) {
     std::ifstream file(fileName);
@@ -16,14 +14,15 @@ bool count(std::string fileName) {
     for (int i = 0; i < words; i++) {
         writeFile << pairArr[i].word << " - " << pairArr[i].occurance << "\n";
     }
+    if (words == 0) {
+        writeFile <<"no words found in file";
+    }
     file.close();
     writeFile.close();
-    std::cout << "\nrunning count\n...\nfinished count\n" << std::endl;//yes i understand this is all at the end but if some is at the start it seg faults this is all spaghetti code dont @ me
     return 1;
 }
 
 bool location(std::string searchWord, std::string fileName) {
-    std::cout << "\nrunning location\n..." << std::endl;
     std::ifstream file(fileName);
     std::ofstream writeFile("location.txt");
     int locations[SIZE];
@@ -41,12 +40,12 @@ bool location(std::string searchWord, std::string fileName) {
     }
     file.close();
     writeFile.close();
-    std::cout << "finished location\n" << std::endl;
     return 1;
 }
 
 bool alphaSort(std::string fileName) {
-    std::cout << "\nrunning alphaSort\n..." << std::endl;
+    std::ofstream writeFileAlpha("alphaSort.txt");
+
     std::ifstream file(fileName);
     readWords(file);
     std::vector<Pair*> results;
@@ -62,13 +61,14 @@ bool alphaSort(std::string fileName) {
     deleteTree(rootPtr);
 
     file.close();
+    writeFileAlpha.close();
     delete rootPtr;
-    std::cout << "finished alphaSort\n" << std::endl;
     return 1;
 }
 
 bool completeSort(std::string fileName) {
-    std::cout << "\nrunning completeSort\n..." << std::endl;
+    std::ofstream writeFileComplete("completeSort.txt");
+
     std::ifstream file(fileName);
     readWords(file);
     std::vector<Pair*> results;
@@ -84,8 +84,8 @@ bool completeSort(std::string fileName) {
     deleteTree(rootPtr);
 
     file.close();
+    writeFileComplete.close();
     delete rootPtr;
-    std::cout << "finished completeSort\n" << std::endl;
     return 1;
 }
 
@@ -267,12 +267,12 @@ TreeNode* insertComplete(Pair p, TreeNode* node) {
     bool left;
     if (p.occurance == node->pair.occurance) {
         if (!comp(p.word, node->pair.word)) {
-            next = node->left;
-            left = true;
-        }
-        else {
             next = node->right;
             left = false;
+        }
+        else {
+            next = node->left;
+            left = true;
         }
     }
     else if (p.occurance > node->pair.occurance) {
@@ -329,8 +329,11 @@ void deleteTree(TreeNode* node) {
         return;
     }
     deleteTree(node->left);
+    node->left = NULL;
     deleteTree(node->right);
+    node->right = NULL;
 
     node->pair.occurance = 0;
     node->pair.word[0] = '\0';
+    node = nullptr;
 }

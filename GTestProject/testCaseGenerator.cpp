@@ -2,10 +2,20 @@
 #include "testCaseGenerator.h"
 #include "wordSort.h"
 
-std::vector<std::string> wordPool = { "alpaca","bee","cat","dog","eagle","frog",
-"giraffle", "hippopotamus","iguana","jaguar","koala","llama","monkey","newt",
-"otter","parrot","quail","raccoon","saola","tortoise","utonagan","vaquita","wasp",
-"xerus","yak","zebra" };
+std::vector<std::string> wordPool = { 
+"aardvark","addax","agouti","alligator","alpaca","anteater","antelope","ant","ape",
+"baboon","bat","bear","bee","beluga","bird","boar","bobcat","bongo","bonobo","butterfly",
+"camel","cat","cattle","cheetah","chicken","cicada","clam","cockroach","codfish","coyote",
+"deer","dinosaur","dog","dolphin","donkey","dove","duck","eagle","echidna","eel","elephant",
+"elk","emu","falcon","ferret","finch","fish","fly","fox","frog","gerbil","giraffle","gnat",
+"gnu","goat","goose","gorilla","hamster","hare","hawk","hedgehog","heron","hippopotamus",
+"iguana","jaguar","jellyfish","kangaroo","koala","lark","lemur","leopard","llama","louse",
+"magpie","manatee","monkey","moose","mosquito","mouse","mule","muskat","newt","nightingale",
+"opossum","ostrich","otter","owl","ox","oyster","panda","parrot","peacock","penguin","pig",
+"quail","rabbit","raccoon","rat","reindeer","rhinoceros","seal","serval","shark","sheep","snake",
+"tiger","tortoise","turkey","turtle","utonagan","vaquita","wasp","whale","wolf","wombat","xerus"
+,"yak","zebra" 
+};
 
 std::vector<std::string> punctuation = { ".", ",", ":", ";", "'", "\""};
 
@@ -89,6 +99,7 @@ std::vector<Pair*> getInputsComplete(int numberOfInputs) {
 		else {
 			int index = words.size();
 			int range = words.size() / oo[i];
+			std::vector<Pair*> reversedInputs;
 			for (int t = 0; t < oo[i]; t++) {
 				Pair* input = new Pair;
 				index -= getRandom(1, range);
@@ -96,7 +107,10 @@ std::vector<Pair*> getInputsComplete(int numberOfInputs) {
 				delete words[index];
 				words.erase(words.begin() + index);
 				input->occurance = occurances[i - t];
-				inputs.push_back(input);
+				reversedInputs.push_back(input);
+			}
+			for (int t = reversedInputs.size() - 1; t >= 0; t--) {
+				inputs.push_back(reversedInputs[t]);
 			}
 			i -= oo[i] - 1;
 		}
