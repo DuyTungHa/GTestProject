@@ -52,4 +52,5 @@ void deleteTree(TreeNode*);
 extern Pair pairArr[SIZE];
 extern int words;
 extern int nextPos;
+extern bool rWBool;
 #endif
