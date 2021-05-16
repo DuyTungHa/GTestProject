@@ -1,0 +1,15 @@
+lemur - 33
+mosquito - 31
+bird - 30
+duck - 29
+cat - 24
+monkey - 24
+falcon - 21
+hamster - 17
+panda - 17
+bee - 16
+addax - 13
+gerbil - 12
+rabbit - 9
+deer - 8
+shark - 5

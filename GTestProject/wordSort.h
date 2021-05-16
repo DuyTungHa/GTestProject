@@ -29,7 +29,7 @@ struct TreeNode {
 
 // declare major methods (will all return 1 on "pass" and 0 on any fail)
 bool count(std::string); //returns the count of each word in the order they appear
-bool location(std::string, std::string); //returns the locations of the specified word
+bool wordsLocation(std::string, std::string); //returns the locations of the specified word
 bool alphaSort(std::string); //sorts all words in the file alphabetically
 bool completeSort(std::string); //sorts all words by alphabetical order and count
 

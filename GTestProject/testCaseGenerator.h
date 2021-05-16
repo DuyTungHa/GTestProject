@@ -17,4 +17,6 @@ std::vector<Pair*> getInputsAlphaPairArr(int);
 
 std::vector<Pair*> getInputsComplete(int);
 
+int getRandom(int, int);
+
 #endif

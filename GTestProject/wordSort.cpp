@@ -22,18 +22,17 @@ bool count(std::string fileName) {
     return 1;
 }
 
-bool location(std::string searchWord, std::string fileName) {
+bool wordsLocation(std::string searchWord, std::string fileName) {
     std::ifstream file(fileName);
     std::ofstream writeFile("location.txt");
     int locations[SIZE];
     int locationCount = readWords(file, locations, searchWord);
     if (locationCount > 0) {
-        writeFile << searchWord << " found at location(s): ";
-        writeFile << locations[0] + 1;
+        writeFile << searchWord << " found at location(s): \n";
+        writeFile << locations[0] << "\n";
         for (int i = 1; i < locationCount; i++) {
-            writeFile << ", " << locations[i] + 1;
+            writeFile << locations[i] << "\n";
         }
-        writeFile << "\n";
     }
     else {
         writeFile << "no locations found" << "\n";

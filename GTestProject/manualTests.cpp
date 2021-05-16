@@ -538,27 +538,20 @@ void TEST_LOCATION_1() {
 
 	std::string word = "word";
 
-	location(word, "TEST_LOCATION_1.txt");
+	wordsLocation(word, "TEST_LOCATION_1.txt");
 
 	std::vector<int> numbers;
 
 	std::ifstream inFile("location.txt");
 
-	std::string allText;
-	std::getline(inFile, allText);
-	std::string garbage = allText.substr(0, allText.find(": ") + 2);
-
-	std::string garbageRemoved = allText.erase(0, garbage.length());
-
-	while (garbageRemoved.length() >= 1) {
-		char num = garbageRemoved[0];
-		numbers.push_back((int)(num - '0'));
-		garbageRemoved = garbageRemoved.erase(0, 3);
+	std::string line;
+	std::getline(inFile, line);
+	while (getline(inFile, line)) {
+		numbers.push_back(stoi(line));
 	}
-
-	bool oneCheck = (numbers[0] == 1);
-	bool twoCheck = (numbers[1] == 4);
-	bool threeCheck = (numbers[2] == 5);
+	bool oneCheck = (numbers[0] == 0);
+	bool twoCheck = (numbers[1] == 3);
+	bool threeCheck = (numbers[2] == 4);
 
 	if (oneCheck && twoCheck && threeCheck) {
 		std::cout << "<TEST_LOCATION_1> - PASS" << std::endl;
@@ -575,7 +568,7 @@ void TEST_LOCATION_2() {
 
 	std::string word = "word";
 
-	location(word, "TEST_LOCATION_2.txt");
+	wordsLocation(word, "TEST_LOCATION_2.txt");
 
 	std::ifstream inFile("location.txt");
 

@@ -1,0 +1,15 @@
+anteater
+bear
+boar
+clam
+coyote
+dove
+falcon
+gnat
+hedgehog
+lemur
+magpie
+nightingale
+parrot
+rat
+sheep
