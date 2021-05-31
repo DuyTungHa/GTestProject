@@ -1,0 +1,15 @@
+pig - 26
+oyster - 31
+heron - 18
+llama - 27
+butterfly - 34
+serval - 1
+kangaroo - 35
+goose - 5
+newt - 23
+fish - 20
+eel - 12
+bat - 16
+deer - 32
+antelope - 9
+cicada - 2

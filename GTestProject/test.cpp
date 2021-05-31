@@ -385,13 +385,13 @@ struct CountFixture : public testing::TestWithParam<int> {
 };
 
 // Run randomized test multiple times
-INSTANTIATE_TEST_CASE_P(Instantiation, WordFixture, ::testing::Range(1, 11), );
-INSTANTIATE_TEST_CASE_P(Instantiation, SearchFixture, ::testing::Range(1, 11), );
-INSTANTIATE_TEST_CASE_P(Instantiation, ReadWordFixture, ::testing::Range(1, 11), );
-INSTANTIATE_TEST_CASE_P(Instantiation, ReadAlphaFixture, ::testing::Range(1, 11), );
-INSTANTIATE_TEST_CASE_P(Instantiation, ReadCompleteFixture, ::testing::Range(1, 11), );
-INSTANTIATE_TEST_CASE_P(Instantiation, DeleteTreeFixture, ::testing::Range(1, 11), );
-INSTANTIATE_TEST_CASE_P(Instantiation, InsertNodeAlphaFixture, ::testing::Range(1, 11), );
+INSTANTIATE_TEST_CASE_P(Instantiation, WordFixture, ::testing::Range(1, 101), );
+INSTANTIATE_TEST_CASE_P(Instantiation, SearchFixture, ::testing::Range(1, 101), );
+INSTANTIATE_TEST_CASE_P(Instantiation, ReadWordFixture, ::testing::Range(1, 101), );
+INSTANTIATE_TEST_CASE_P(Instantiation, ReadAlphaFixture, ::testing::Range(1, 101), );
+INSTANTIATE_TEST_CASE_P(Instantiation, ReadCompleteFixture, ::testing::Range(1, 101), );
+INSTANTIATE_TEST_CASE_P(Instantiation, DeleteTreeFixture, ::testing::Range(1, 101), );
+INSTANTIATE_TEST_CASE_P(Instantiation, InsertNodeAlphaFixture, ::testing::Range(1, 101), );
 
 TEST_F(WordFixture, WordCompare) {
 	// Input[0] > Input[1]
@@ -550,7 +550,7 @@ void checkNodeComplete(TreeNode* n) {
 	}
 
 	if (n->right != nullptr) {
-		EXPECT_TRUE(n->right->pair.occurance < n->pair.occurance || 
+		EXPECT_TRUE(n->right->pair.occurance <= n->pair.occurance || 
 					comp(n->right->pair.word, n->pair.word));
 		checkNodeComplete(n->right);
 	}

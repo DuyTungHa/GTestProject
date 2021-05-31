@@ -1,0 +1,15 @@
+goat - 51
+oyster - 46
+codfish - 41
+manatee - 41
+jaguar - 36
+nightingale - 35
+penguin - 30
+echidna - 26
+ant - 21
+cheetah - 18
+reindeer - 18
+addax - 17
+hamster - 13
+bird - 10
+fox - 5
